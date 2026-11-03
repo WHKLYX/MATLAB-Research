@@ -41,7 +41,7 @@ The v1.1.0 complete-cycle averaging implementation used an external `Phase` inpu
 - Compile the MATLAB Function in the target Simulink model and confirm signal dimensions.
 - Confirm Powergui, fixed-step solver, MATLAB Function execution interval, and `Ts` are all consistent at `8e-8 s`.
 - Test representative low-, mid-, and high-frequency points, including 2 kHz.
-- Confirm that the average is ready after `WAIT_CYCLES + AVG_CYCLES) complete cycles.
+- Confirm that the average is ready after `WAIT_CYCLES + AVG_CYCLES` complete cycles.
 - Confirm that `Valid` triggers the Enabled Subsystem exactly once per `PNUM`.
 - Confirm exactly one logged result per sweep point, including in the high-frequency range.
 - Confirm that the external counter retains each point for `WAIT_CYCLES + AVG_CYCLES + 0.1` cycles.
