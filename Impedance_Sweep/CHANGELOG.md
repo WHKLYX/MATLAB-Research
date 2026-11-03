@@ -1,5 +1,48 @@
 # Changelog — Impedance Sweep
 
+## 2026-11-03 — v1.3.0
+
+**Status: Final user-designated version for the current impedance-sweep workflow.**  
+**Verification note:** Source and documentation have been archived. Simulink compilation and end-to-end runtime verification have not been independently performed as part of this GitHub update.
+
+### Final source
+
+- `v1_3_0/Average_Mean_Cycle.m`
+- `v1_3_0/README.md`
+
+The MATLAB Function body follows the exact version supplied by the user in the 2026-11-03 conversation. Only version/date/status comments were added to the file header; the algorithm and input/output interface were not otherwise changed.
+
+### Recorded behavior and settings
+
+- 10 inputs: `Uc`, `Us`, `Ic`, `Is`, `Freq`, `PNUM`, `EN`, `Ts`, `WAIT_CYCLES`, `AVG_CYCLES`.
+- 5 outputs: `Uc_average`, `Us_average`, `Ic_average`, `Is_average`, `Valid`.
+- The external `Phase` input is removed.
+- The sweep controller changes `PNUM` and updates `Freq` together; `PNUM` is the new-point reset signal.
+- Internal phase accumulation uses `Freq*Ts`.
+- The first `WAIT_CYCLES` complete cycles are discarded; the following `AVG_CYCLES` complete cycles are accumulated and averaged.
+- No large sample-history buffer or `NMAX` allocation is used.
+- `Valid` is high for one MATLAB Function execution only, once per `PNUM`.
+- `measurementDone` locks the measurement after completion until the next `PNUM` or `EN` reset.
+- The external sweep counter provides the extra 0.1-cycle margin. The total dwell is `WAIT_CYCLES + AVG_CYCLES + 0.1`; the extra 0.1 cycle is not averaged and does not extend `Valid`.
+
+### Target sweep configuration
+
+- Sweep range: 1 Hz to 100 kHz.
+- Powergui discrete sample time: `8e-8 s`.
+- Model fixed-step size: `8e-8 s`.
+- MATLAB Function actual execution interval: `8e-8 s`.
+- `Ts` input: `8e-8 s`.
+- At 100 kHz, `Freq*Ts = 0.008`, corresponding to 125 samples per perturbation cycle.
+- The implementation assumes `0 < Freq*Ts < 1`.
+
+**Important integration note:** setting the `Ts` input does not configure the MATLAB Function execution rate. The block must actually execute at the supplied `Ts`. Also ensure the downstream Enabled Subsystem/capture path can observe the one-execution-step `Valid` pulse; a slower logger such as `3*Ts` may miss it depending on sample-hit alignment.
+
+### Final-version designation
+
+v1.3.0 is the user-designated final/recommended source for the current 1 Hz–100 kHz sweep workflow. Earlier versions remain unchanged for rollback and comparison. This designation records the user's chosen final code; it must not be interpreted as a claim that this GitHub operation compiled or ran the Simulink model.
+
+---
+
 All entries are versioned. Previous versions are retained; do not overwrite them.
 
 ## 2026-11-03 — v1.2.0
